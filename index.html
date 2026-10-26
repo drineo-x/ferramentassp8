@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>SSP8 - Extrator de IDs | DHL</title>
+<title>SSP8 - Ferramentas | DHL</title>
 <style>
   :root {
     --dhl-yellow: #FFCC00;
@@ -49,7 +49,7 @@
   header {
     background: linear-gradient(120deg, var(--dhl-red) 0%, var(--dhl-red-dark) 100%);
     position: relative;
-    padding-bottom: 64px;
+    padding-bottom: 22px;
   }
   header::after {
     content: "";
@@ -59,7 +59,7 @@
     background: var(--dhl-yellow);
   }
   .header-bar {
-    max-width: 880px;
+    max-width: 1180px;
     margin: 0 auto;
     padding: 20px 20px 0;
     display: flex;
@@ -103,14 +103,75 @@
     white-space: nowrap;
   }
 
-  /* ---------- MAIN ---------- */
-  main {
-    max-width: 880px;
-    margin: -44px auto 0;
-    padding: 0 20px 40px;
-    position: relative;
+  /* ---------- LAYOUT + MENU LATERAL ---------- */
+  .layout {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 24px 20px 40px;
+    display: grid;
+    grid-template-columns: 230px minmax(0, 1fr);
+    gap: 24px;
+    align-items: start;
   }
 
+  .sidebar {
+    background: var(--dhl-surface);
+    border: 1px solid var(--dhl-line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 12px;
+    position: sticky;
+    top: 16px;
+  }
+  .menu-title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--dhl-gray);
+    padding: 6px 12px 10px;
+  }
+  .menu-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 4px;
+    background: transparent;
+    color: var(--dhl-dark);
+    border: 1px solid transparent;
+    border-left: 4px solid transparent;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: left;
+    letter-spacing: 0;
+  }
+  .menu-item:hover { background: var(--dhl-field); }
+  .menu-item.active {
+    background: var(--dhl-yellow-soft);
+    border-left-color: var(--dhl-red);
+    font-weight: 700;
+  }
+  .menu-item .num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    flex: none;
+    border-radius: 6px;
+    background: var(--dhl-line);
+    font-size: 12px;
+  }
+  .menu-item.active .num { background: var(--dhl-red); color: #fff; }
+
+  main { min-width: 0; }
+  .tool { display: none; }
+  .tool.active { display: block; }
+
+  /* ---------- PAINEL ---------- */
   .panel {
     background: var(--dhl-surface);
     border: 1px solid var(--dhl-line);
@@ -180,6 +241,13 @@
     box-shadow: 0 0 0 4px rgba(212,5,17,.14);
   }
 
+  .cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .cols textarea { min-height: 220px; }
+
   .buttons {
     margin-top: 16px;
     display: flex;
@@ -197,15 +265,15 @@
     cursor: pointer;
     transition: transform .12s ease, box-shadow .15s ease, background .15s ease;
   }
-  button:hover { transform: translateY(-1px); }
-  button:active { transform: translateY(0); }
+  .buttons button:hover { transform: translateY(-1px); }
+  .buttons button:active { transform: translateY(0); }
   button:focus-visible { outline: 3px solid var(--dhl-yellow); outline-offset: 2px; }
 
-  #processarBtn { background: var(--dhl-red); color: #fff; box-shadow: 0 4px 14px rgba(212,5,17,.3); }
-  #processarBtn:hover { background: var(--dhl-red-dark); }
-  #copiarBtn { background: var(--dhl-yellow); color: #1F1F27; box-shadow: 0 4px 14px rgba(255,204,0,.35); }
-  #limparBtn { background: transparent; color: var(--dhl-gray); border-color: var(--dhl-line); margin-left: auto; }
-  #limparBtn:hover { color: var(--dhl-dark); background: var(--dhl-field); }
+  .btn-primary { background: var(--dhl-red); color: #fff; box-shadow: 0 4px 14px rgba(212,5,17,.3); }
+  .btn-primary:hover { background: var(--dhl-red-dark); }
+  .btn-copy { background: var(--dhl-yellow); color: #1F1F27; box-shadow: 0 4px 14px rgba(255,204,0,.35); }
+  .btn-clear { background: transparent; color: var(--dhl-gray); border-color: var(--dhl-line); margin-left: auto; }
+  .btn-clear:hover { color: var(--dhl-dark); background: var(--dhl-field); }
 
   .resultado-wrap { margin-top: 28px; }
 
@@ -239,6 +307,7 @@
     flex-wrap: wrap;
     gap: 8px;
   }
+  .stats { display: flex; gap: 8px; flex-wrap: wrap; }
 
   .contador {
     font-size: 12px;
@@ -263,10 +332,18 @@
     padding: 0 20px 28px;
   }
 
+  @media (max-width: 800px) {
+    .layout { grid-template-columns: 1fr; gap: 16px; }
+    .sidebar { position: static; display: flex; gap: 6px; padding: 8px; overflow-x: auto; }
+    .menu-title { display: none; }
+    .menu-item { width: auto; white-space: nowrap; margin: 0; }
+    .cols { grid-template-columns: 1fr; }
+  }
+
   @media (max-width: 560px) {
     .ssp-tag { display: none; }
     .panel-body { padding: 18px; }
-    #limparBtn { margin-left: 0; }
+    .btn-clear { margin-left: 0; }
     .buttons button { flex: 1 1 auto; }
   }
 </style>
@@ -279,52 +356,123 @@
       <div class="logo-mark">DHL</div>
       <div class="header-title">
         <div class="system">Sistema SSP8</div>
-        <h1>Extrator de IDs</h1>
+        <h1>Ferramentas SSP8</h1>
       </div>
     </div>
-    <div class="ssp-tag">Ferramenta interna &middot; uso operacional</div>
+    <div class="ssp-tag">Ferramentas internas &middot; uso operacional</div>
   </div>
 </header>
 
-<main>
-  <div class="panel">
-    <div class="panel-head">
-      <span class="dot"></span>
-      <h2>Entrada de dados</h2>
-    </div>
-    <div class="panel-body">
-      <p class="desc">Cole a lista de IDs abaixo, um por linha. A ferramenta extrai apenas os números, mesmo que haja texto junto, e une tudo separado por vírgula.</p>
+<div class="layout">
+  <nav class="sidebar" aria-label="Ferramentas">
+    <div class="menu-title">Ferramentas</div>
+    <button class="menu-item active" data-tool="query"><span class="num">1</span>Lista Query</button>
+    <button class="menu-item" data-tool="comparacao"><span class="num">2</span>ID Comparação</button>
+  </nav>
 
-      <label class="field-label" for="entrada">IDs colados</label>
-      <textarea id="entrada" placeholder="Cole aqui os IDs, um por linha...
+  <main>
+    <!-- ===== 1. LISTA QUERY ===== -->
+    <section class="tool active" id="tool-query">
+      <div class="panel">
+        <div class="panel-head">
+          <span class="dot"></span>
+          <h2>Lista Query</h2>
+        </div>
+        <div class="panel-body">
+          <p class="desc">Cole a lista de IDs abaixo, um por linha. A ferramenta extrai apenas os números, mesmo que haja texto junto, e une tudo separado por vírgula.</p>
+
+          <label class="field-label" for="entrada">IDs colados</label>
+          <textarea id="entrada" placeholder="Cole aqui os IDs, um por linha...
 Exemplo:
 12345
 ID: 13456
 13456 - pedido
 67890"></textarea>
 
-      <div class="buttons">
-        <button id="processarBtn">Processar</button>
-        <button id="copiarBtn">Copiar resultado</button>
-        <button id="limparBtn">Limpar tudo</button>
-      </div>
+          <div class="buttons">
+            <button class="btn-primary" id="processarBtn">Processar</button>
+            <button class="btn-copy" id="copiarBtn">Copiar resultado</button>
+            <button class="btn-clear" id="limparBtn">Limpar tudo</button>
+          </div>
 
-      <div class="resultado-wrap">
-        <hr class="result-divider">
-        <label class="field-label">Resultado</label>
-        <div class="resultado-box" id="resultado"></div>
-        <div class="status-row">
-          <span class="contador" id="contador"></span>
-          <span class="aviso" id="aviso" role="status"></span>
+          <div class="resultado-wrap">
+            <hr class="result-divider">
+            <label class="field-label">Resultado</label>
+            <div class="resultado-box" id="resultado"></div>
+            <div class="status-row">
+              <span class="contador" id="contador"></span>
+              <span class="aviso" id="aviso" role="status"></span>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-  </div>
-</main>
+    </section>
 
-<footer>SSP8 &middot; Ferramenta local &middot; nenhum dado é enviado para fora deste arquivo</footer>
+    <!-- ===== 2. ID COMPARAÇÃO ===== -->
+    <section class="tool" id="tool-comparacao">
+      <div class="panel">
+        <div class="panel-head">
+          <span class="dot"></span>
+          <h2>ID Comparação</h2>
+        </div>
+        <div class="panel-body">
+          <p class="desc">Cole uma lista de IDs em cada campo (como um PROCV no Excel ou LOOKUP no Sheets). A ferramenta retorna apenas os IDs que aparecem nas duas listas, com a quantidade e a listagem. IDs repetidos são contados uma única vez.</p>
+
+          <div class="cols">
+            <div>
+              <label class="field-label" for="listaA">Lista A</label>
+              <textarea id="listaA" placeholder="Cole aqui a primeira lista de IDs..."></textarea>
+              <div class="status-row"><span class="contador" id="contA"></span></div>
+            </div>
+            <div>
+              <label class="field-label" for="listaB">Lista B</label>
+              <textarea id="listaB" placeholder="Cole aqui a segunda lista de IDs..."></textarea>
+              <div class="status-row"><span class="contador" id="contB"></span></div>
+            </div>
+          </div>
+
+          <div class="buttons">
+            <button class="btn-primary" id="compararBtn">Comparar</button>
+            <button class="btn-copy" id="copiarIguaisBtn">Copiar iguais</button>
+            <button class="btn-clear" id="limparCompBtn">Limpar tudo</button>
+          </div>
+
+          <div class="resultado-wrap">
+            <hr class="result-divider">
+            <label class="field-label">IDs em comum</label>
+            <div class="resultado-box" id="resultadoComp"></div>
+            <div class="status-row">
+              <div class="stats">
+                <span class="contador" id="contIguais"></span>
+                <span class="contador" id="contSoA"></span>
+                <span class="contador" id="contSoB"></span>
+              </div>
+              <span class="aviso" id="avisoComp" role="status"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<footer>SSP8 &middot; Ferramentas locais &middot; nenhum dado é enviado para fora deste arquivo</footer>
 
 <script>
+  // ---------- Menu lateral ----------
+  const menuItens = document.querySelectorAll('.menu-item');
+
+  function abrirFerramenta(nome) {
+    menuItens.forEach(b => b.classList.toggle('active', b.dataset.tool === nome));
+    document.querySelectorAll('.tool').forEach(t => t.classList.toggle('active', t.id === 'tool-' + nome));
+    try { history.replaceState(null, '', '#' + nome); } catch (e) {}
+  }
+  menuItens.forEach(b => b.addEventListener('click', () => abrirFerramenta(b.dataset.tool)));
+
+  const hashInicial = location.hash.slice(1);
+  if (document.getElementById('tool-' + hashInicial)) abrirFerramenta(hashInicial);
+
+  // ---------- Lista Query ----------
   const entrada = document.getElementById('entrada');
   const resultado = document.getElementById('resultado');
   const contador = document.getElementById('contador');
@@ -365,6 +513,67 @@ ID: 13456
   document.getElementById('copiarBtn').addEventListener('click', copiar);
   document.getElementById('limparBtn').addEventListener('click', limpar);
   entrada.addEventListener('input', processar);
+
+  // ---------- ID Comparação ----------
+  const listaA = document.getElementById('listaA');
+  const listaB = document.getElementById('listaB');
+  const resultadoComp = document.getElementById('resultadoComp');
+  const avisoComp = document.getElementById('avisoComp');
+  const contA = document.getElementById('contA');
+  const contB = document.getElementById('contB');
+  const contIguais = document.getElementById('contIguais');
+  const contSoA = document.getElementById('contSoA');
+  const contSoB = document.getElementById('contSoB');
+
+  const idsUnicos = texto => [...new Set(texto.match(/\d+/g) || [])];
+
+  function comparar() {
+    const a = idsUnicos(listaA.value);
+    const b = idsUnicos(listaB.value);
+    const setA = new Set(a);
+    const setB = new Set(b);
+    const iguais = a.filter(id => setB.has(id));
+
+    resultadoComp.textContent = iguais.join(',');
+    contA.textContent = a.length ? `${a.length} ID(s) único(s)` : '';
+    contB.textContent = b.length ? `${b.length} ID(s) único(s)` : '';
+
+    if (!a.length && !b.length) {
+      contIguais.textContent = contSoA.textContent = contSoB.textContent = '';
+    } else {
+      contIguais.textContent = `${iguais.length} igual(is)`;
+      contSoA.textContent = `${a.length - iguais.length} só na A`;
+      contSoB.textContent = `${b.filter(id => !setA.has(id)).length} só na B`;
+    }
+    avisoComp.textContent = '';
+  }
+
+  function copiarIguais() {
+    if (!resultadoComp.textContent) {
+      avisoComp.textContent = 'Nada para copiar. Não há IDs em comum.';
+      avisoComp.style.color = '#D40511';
+      return;
+    }
+    navigator.clipboard.writeText(resultadoComp.textContent).then(() => {
+      avisoComp.textContent = 'IDs copiados!';
+      avisoComp.style.color = 'var(--ok)';
+    }).catch(() => {
+      avisoComp.textContent = 'Não foi possível copiar. Selecione o texto manualmente.';
+      avisoComp.style.color = '#D40511';
+    });
+  }
+
+  function limparComp() {
+    listaA.value = '';
+    listaB.value = '';
+    comparar();
+  }
+
+  document.getElementById('compararBtn').addEventListener('click', comparar);
+  document.getElementById('copiarIguaisBtn').addEventListener('click', copiarIguais);
+  document.getElementById('limparCompBtn').addEventListener('click', limparComp);
+  listaA.addEventListener('input', comparar);
+  listaB.addEventListener('input', comparar);
 </script>
 
 </body>
