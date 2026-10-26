@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SSP8 - Extrator de IDs | DHL</title>
+<style>
+  :root {
+    --dhl-yellow: #FFCC00;
+    --dhl-yellow-soft: #FFF6CC;
+    --dhl-red: #D40511;
+    --dhl-red-dark: #B00410;
+    --dhl-dark: #1F1F27;
+    --dhl-gray: #6B6B76;
+    --dhl-bg: #F4F4F1;
+    --dhl-surface: #FFFFFF;
+    --dhl-field: #FAFAF8;
+    --dhl-line: #E6E6E0;
+    --ok: #168a3a;
+    --radius: 14px;
+    --shadow: 0 1px 2px rgba(20,20,30,.05), 0 8px 28px rgba(20,20,30,.08);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --dhl-dark: #F2F2F4;
+      --dhl-gray: #A2A2AE;
+      --dhl-bg: #121217;
+      --dhl-surface: #1C1C23;
+      --dhl-field: #15151B;
+      --dhl-line: #2C2C36;
+      --dhl-yellow-soft: #2A2500;
+      --ok: #4cc26f;
+      --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 28px rgba(0,0,0,.4);
+    }
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, Arial, sans-serif;
+    background: var(--dhl-bg);
+    margin: 0;
+    color: var(--dhl-dark);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ---------- HEADER ---------- */
+  header {
+    background: linear-gradient(120deg, var(--dhl-red) 0%, var(--dhl-red-dark) 100%);
+    position: relative;
+    padding-bottom: 64px;
+  }
+  header::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 5px;
+    background: var(--dhl-yellow);
+  }
+  .header-bar {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 20px 20px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .brand { display: flex; align-items: center; gap: 14px; }
+  .logo-mark {
+    background: var(--dhl-yellow);
+    color: var(--dhl-red);
+    font-weight: 900;
+    font-size: 20px;
+    letter-spacing: 1px;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-style: italic;
+    box-shadow: 0 4px 12px rgba(0,0,0,.2);
+  }
+  .header-title { color: #fff; }
+  .header-title .system {
+    font-size: 11px;
+    letter-spacing: 2px;
+    opacity: .85;
+    text-transform: uppercase;
+  }
+  .header-title h1 {
+    margin: 2px 0 0;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -.2px;
+  }
+  .ssp-tag {
+    color: #fff;
+    font-size: 12px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: rgba(255,255,255,.16);
+    border: 1px solid rgba(255,255,255,.25);
+    backdrop-filter: blur(6px);
+    white-space: nowrap;
+  }
+
+  /* ---------- MAIN ---------- */
+  main {
+    max-width: 880px;
+    margin: -44px auto 0;
+    padding: 0 20px 40px;
+    position: relative;
+  }
+
+  .panel {
+    background: var(--dhl-surface);
+    border: 1px solid var(--dhl-line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+
+  .panel-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 18px 24px;
+    border-bottom: 1px solid var(--dhl-line);
+  }
+  .panel-head .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--dhl-red);
+    box-shadow: 0 0 0 4px rgba(212,5,17,.14);
+  }
+  .panel-head h2 {
+    font-size: 14px;
+    margin: 0;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .8px;
+  }
+  .panel-body { padding: 24px; }
+
+  p.desc {
+    color: var(--dhl-gray);
+    font-size: 14px;
+    margin: 0 0 20px;
+    line-height: 1.6;
+  }
+
+  label.field-label {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .8px;
+    color: var(--dhl-gray);
+    margin-bottom: 8px;
+  }
+
+  textarea {
+    width: 100%;
+    min-height: 190px;
+    padding: 14px 16px;
+    font-size: 14px;
+    line-height: 1.55;
+    border: 1px solid var(--dhl-line);
+    border-radius: 10px;
+    resize: vertical;
+    font-family: 'JetBrains Mono', 'Cascadia Code', Consolas, monospace;
+    background: var(--dhl-field);
+    color: var(--dhl-dark);
+    transition: border-color .15s, box-shadow .15s;
+  }
+  textarea::placeholder { color: var(--dhl-gray); opacity: .7; }
+  textarea:focus {
+    outline: none;
+    border-color: var(--dhl-red);
+    box-shadow: 0 0 0 4px rgba(212,5,17,.14);
+  }
+
+  .buttons {
+    margin-top: 16px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  button {
+    border: 1px solid transparent;
+    padding: 11px 20px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 700;
+    font-family: inherit;
+    letter-spacing: .3px;
+    cursor: pointer;
+    transition: transform .12s ease, box-shadow .15s ease, background .15s ease;
+  }
+  button:hover { transform: translateY(-1px); }
+  button:active { transform: translateY(0); }
+  button:focus-visible { outline: 3px solid var(--dhl-yellow); outline-offset: 2px; }
+
+  #processarBtn { background: var(--dhl-red); color: #fff; box-shadow: 0 4px 14px rgba(212,5,17,.3); }
+  #processarBtn:hover { background: var(--dhl-red-dark); }
+  #copiarBtn { background: var(--dhl-yellow); color: #1F1F27; box-shadow: 0 4px 14px rgba(255,204,0,.35); }
+  #limparBtn { background: transparent; color: var(--dhl-gray); border-color: var(--dhl-line); margin-left: auto; }
+  #limparBtn:hover { color: var(--dhl-dark); background: var(--dhl-field); }
+
+  .resultado-wrap { margin-top: 28px; }
+
+  .result-divider {
+    border: none;
+    border-top: 1px solid var(--dhl-line);
+    margin: 0 0 24px;
+  }
+
+  .resultado-box {
+    width: 100%;
+    min-height: 84px;
+    padding: 16px;
+    font-size: 14px;
+    line-height: 1.55;
+    border: 1px solid var(--dhl-line);
+    border-left: 4px solid var(--dhl-yellow);
+    border-radius: 10px;
+    background: var(--dhl-field);
+    font-family: 'JetBrains Mono', 'Cascadia Code', Consolas, monospace;
+    word-break: break-all;
+    white-space: pre-wrap;
+    color: var(--dhl-dark);
+  }
+
+  .status-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 12px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .contador {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--dhl-dark);
+    background: var(--dhl-yellow-soft);
+    padding: 5px 12px;
+    border-radius: 999px;
+  }
+  .contador:empty { display: none; }
+
+  .aviso {
+    font-size: 13px;
+    font-weight: 600;
+    min-height: 18px;
+  }
+
+  footer {
+    text-align: center;
+    color: var(--dhl-gray);
+    font-size: 12px;
+    padding: 0 20px 28px;
+  }
+
+  @media (max-width: 560px) {
+    .ssp-tag { display: none; }
+    .panel-body { padding: 18px; }
+    #limparBtn { margin-left: 0; }
+    .buttons button { flex: 1 1 auto; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-bar">
+    <div class="brand">
+      <div class="logo-mark">DHL</div>
+      <div class="header-title">
+        <div class="system">Sistema SSP8</div>
+        <h1>Extrator de IDs</h1>
+      </div>
+    </div>
+    <div class="ssp-tag">Ferramenta interna &middot; uso operacional</div>
+  </div>
+</header>
+
+<main>
+  <div class="panel">
+    <div class="panel-head">
+      <span class="dot"></span>
+      <h2>Entrada de dados</h2>
+    </div>
+    <div class="panel-body">
+      <p class="desc">Cole a lista de IDs abaixo, um por linha. A ferramenta extrai apenas os números, mesmo que haja texto junto, e une tudo separado por vírgula.</p>
+
+      <label class="field-label" for="entrada">IDs colados</label>
+      <textarea id="entrada" placeholder="Cole aqui os IDs, um por linha...
+Exemplo:
+12345
+ID: 13456
+13456 - pedido
+67890"></textarea>
+
+      <div class="buttons">
+        <button id="processarBtn">Processar</button>
+        <button id="copiarBtn">Copiar resultado</button>
+        <button id="limparBtn">Limpar tudo</button>
+      </div>
+
+      <div class="resultado-wrap">
+        <hr class="result-divider">
+        <label class="field-label">Resultado</label>
+        <div class="resultado-box" id="resultado"></div>
+        <div class="status-row">
+          <span class="contador" id="contador"></span>
+          <span class="aviso" id="aviso" role="status"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>SSP8 &middot; Ferramenta local &middot; nenhum dado é enviado para fora deste arquivo</footer>
+
+<script>
+  const entrada = document.getElementById('entrada');
+  const resultado = document.getElementById('resultado');
+  const contador = document.getElementById('contador');
+  const aviso = document.getElementById('aviso');
+
+  function processar() {
+    const texto = entrada.value;
+    const numeros = texto.match(/\d+/g) || [];
+    const resultadoFinal = numeros.join(',');
+    resultado.textContent = resultadoFinal;
+    contador.textContent = numeros.length > 0 ? `${numeros.length} ID(s) encontrado(s)` : 'Nenhum ID encontrado';
+    aviso.textContent = '';
+  }
+
+  function copiar() {
+    if (!resultado.textContent) {
+      aviso.textContent = 'Nada para copiar. Processe os IDs primeiro.';
+      aviso.style.color = '#D40511';
+      return;
+    }
+    navigator.clipboard.writeText(resultado.textContent).then(() => {
+      aviso.textContent = 'Resultado copiado!';
+      aviso.style.color = 'var(--ok)';
+    }).catch(() => {
+      aviso.textContent = 'Não foi possível copiar. Selecione o texto manualmente.';
+      aviso.style.color = '#D40511';
+    });
+  }
+
+  function limpar() {
+    entrada.value = '';
+    resultado.textContent = '';
+    contador.textContent = '';
+    aviso.textContent = '';
+  }
+
+  document.getElementById('processarBtn').addEventListener('click', processar);
+  document.getElementById('copiarBtn').addEventListener('click', copiar);
+  document.getElementById('limparBtn').addEventListener('click', limpar);
+  entrada.addEventListener('input', processar);
+</script>
+
+</body>
+</html>
