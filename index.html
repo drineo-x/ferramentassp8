@@ -299,6 +299,23 @@
     color: var(--dhl-dark);
   }
 
+  .result-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+  }
+  .result-head .field-label { margin: 0; }
+  .result-actions { display: flex; gap: 8px; }
+  .btn-sm { padding: 8px 14px; font-size: 12px; margin-left: 0; }
+  #resultadoComp {
+    max-height: 360px;
+    overflow-y: auto;
+    word-break: normal;
+  }
+
   .status-row {
     display: flex;
     justify-content: space-between;
@@ -433,13 +450,17 @@ ID: 13456
 
           <div class="buttons">
             <button class="btn-primary" id="compararBtn">Comparar</button>
-            <button class="btn-copy" id="copiarIguaisBtn">Copiar iguais</button>
-            <button class="btn-clear" id="limparCompBtn">Limpar tudo</button>
           </div>
 
           <div class="resultado-wrap">
             <hr class="result-divider">
-            <label class="field-label">IDs em comum</label>
+            <div class="result-head">
+              <label class="field-label">IDs em comum</label>
+              <div class="result-actions">
+                <button class="btn-copy btn-sm" id="copiarIguaisBtn">Copiar lista</button>
+                <button class="btn-clear btn-sm" id="limparCompBtn">Limpar tudo</button>
+              </div>
+            </div>
             <div class="resultado-box" id="resultadoComp"></div>
             <div class="status-row">
               <div class="stats">
@@ -534,7 +555,7 @@ ID: 13456
     const setB = new Set(b);
     const iguais = a.filter(id => setB.has(id));
 
-    resultadoComp.textContent = iguais.join(',');
+    resultadoComp.textContent = iguais.join('\n');
     contA.textContent = a.length ? `${a.length} ID(s) único(s)` : '';
     contB.textContent = b.length ? `${b.length} ID(s) único(s)` : '';
 
@@ -555,7 +576,7 @@ ID: 13456
       return;
     }
     navigator.clipboard.writeText(resultadoComp.textContent).then(() => {
-      avisoComp.textContent = 'IDs copiados!';
+      avisoComp.textContent = 'Lista copiada!';
       avisoComp.style.color = 'var(--ok)';
     }).catch(() => {
       avisoComp.textContent = 'Não foi possível copiar. Selecione o texto manualmente.';
